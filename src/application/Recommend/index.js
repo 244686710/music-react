@@ -7,10 +7,12 @@ import Scroll from '../../components/scroll';
 import { Content } from './style'
 import { forceCheck } from 'react-lazyload';
 import Loading from '../../baseUI/loading/index';
+import { renderRoutes } from 'react-router-config'
 
 function Recommend(props) {
   const { bannerList, recommendList, enterLoading } = props;
   const { getBannerDataDispatch, getRecommendListDataDispatch } = props;
+  console.log(props.route.routes)
   useEffect(() => {
     // 如果页面有数据，则不发请求
     // immutable 数据结构中长度属性 size
@@ -35,7 +37,8 @@ function Recommend(props) {
         </div>
       </Scroll>
 
-      { enterLoading ?  <Loading></Loading> : null } 
+      {enterLoading ? <Loading></Loading> : null} 
+      {renderRoutes(props.route.routes)}
     </Content>
   )
 }
