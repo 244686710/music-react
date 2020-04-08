@@ -5,6 +5,8 @@ import Horizen from '../../baseUI/horizen-item';
 import Loading from '../../baseUI/loading';
 import Scroll from '../../components/scroll/index';
 import { NavContainer, ListContainer, List, ListItem, EnterLoading } from "./style";
+
+import { renderRoutes } from 'react-router-config';
 // import { toJS } from 'immutable'
 
 import { categoryTypes, alphaTypes } from '../../api/config';
@@ -65,12 +67,17 @@ const mapDispatchToProps = (dispatch) => {
 const renderSingerList = (props) => {
     let { singerList } = props;
     const singerListJS = singerList ? singerList.toJS() : [];
+
+    const enterDetail = (id) => {
+        props.history.push(`/singers/${id}`)
+    }
+
     return (
         <List>
             {
                 singerListJS.map((item, index) => {
                     return (
-                        <ListItem key={item.accountId + "" + index}>
+                        <ListItem key={item.accountId + "" + index} onClick={() => enterDetail(item.id)}>
                             <div className="img_wrapper">
                                 <LazyLoad placeholder={<img width="100%" height="100%" src={require ('./singer.png')} alt="music"/>}>
                                     <img src={`${item.picUrl}?param=300x300`} width="100%" height="100%" alt="music"/>
@@ -169,6 +176,7 @@ function Singers(props) {
                     {renderSingerList(props)}
                 </Scroll>
             </ListContainer>
+            {renderRoutes(props.route.routes)}
         </div> 
     )
 }

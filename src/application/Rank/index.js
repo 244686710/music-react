@@ -2,15 +2,11 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux'
 import {getRankList} from './store/index'
 import { EnterLoading } from './../Singers/style';
-import { filterIndex, filterIdx } from '../../api/utils';
+import { filterIndex } from '../../api/utils';
 import { renderRoutes } from 'react-router-config';
 import { Container, List, ListItem, SongList } from './style'
 import Scroll from '../../components/scroll';
 import Loading from '../../baseUI/loading/index';
-
-
-
-
 
 function Rank(props) {
     const { rankList:list, loading } = props;
@@ -22,14 +18,6 @@ function Rank(props) {
     useEffect(() => {
         getRankListDataDispatch();
     }, [getRankListDataDispatch]);
-
-    const enterDetail = (name) => {
-        const idx = filterIdx(name);
-        if(idx === null) {
-          alert("暂无相关数据");
-          return;
-        } 
-    }
 
     const renderSongList = (list) => {
         return list.length ? (
@@ -43,6 +31,10 @@ function Rank(props) {
         ) : null;
     }
 
+    const enterDetail = (detail) => {
+        props.history.push(`/rank/${detail.id}`)
+    }
+
     const renderRankList = (list, global) => {
         return (
             <List globalRank={global}>
@@ -50,7 +42,7 @@ function Rank(props) {
                     list.map(item => {
                         return (
                             <ListItem key={item.coverImgId} tracks={item.tracks} onClick={() => {
-                                enterDetail(item.name)
+                                enterDetail(item)
                             }}>
                                 <div className="img_wrapper">
                                 <img src={item.coverImgUrl} alt=""/>
