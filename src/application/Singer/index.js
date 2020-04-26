@@ -8,6 +8,7 @@ import { HEADER_HEIGHT } from './../../api/config';
 import { connect } from 'react-redux'
 import { getSingerInfo, changeEnterLoading } from './store/actionCreators'
 import Loading from "./../../baseUI/loading/index";
+import MusicNote from "../../baseUI/music-note/index";
 
 function Singer(props) {
   const [showStatus, setShowStatus] = useState(true);
@@ -26,6 +27,7 @@ function Singer(props) {
   const songScroll = useRef();
   const header = useRef();
   const layer = useRef();
+  const musicNoteRef = useRef ();
 
   // 图片初始高度
   const initialHeight = useRef(0);
@@ -86,6 +88,9 @@ function Singer(props) {
       imageDOM.style.zIndex = 99;
     }
   }, [])
+  const musicAnimation = (x, y) => {
+    musicNoteRef.current.startAnimation ({ x, y });
+  };
 
   return (
     <CSSTransition
@@ -117,11 +122,13 @@ function Singer(props) {
             <SongsList
               songs={songs}
               showCollect={false}
+              musicAnimation={musicAnimation}
             >
             </SongsList>
           </Scroll>
         </SongListWrapper>
-        { loading ? (<Loading></Loading>) : null}
+        {loading ? (<Loading></Loading>) : null}
+        <MusicNote ref={musicNoteRef}></MusicNote>
       </Container>
     </CSSTransition>
   )

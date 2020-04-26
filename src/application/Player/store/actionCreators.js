@@ -39,4 +39,9 @@ export const changeCurrentSong = (data) => ({
   export const changeShowPlayList = (data) => ({
     type: SET_SHOW_PLAYLIST,
     data
-  });
+});
+  
+export const deleteSong = (data) => ({
+  type: DELETE_SONG,
+  data
+});

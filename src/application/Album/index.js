@@ -9,7 +9,8 @@ import style from "../../assets/global-style";
 import { connect } from 'react-redux'
 import { changeEnterLoading, getAlbumList } from './store/actionCreators'
 import Loading from '../../baseUI/loading/index';
-import SongsList from './../SongsList/index'
+import SongsList from './../SongsList/index';
+import MusicNote from "../../baseUI/music-note/index";
 
 export const HEADER_HEIGHT = 45;
   
@@ -22,7 +23,7 @@ function Album(props) {
 
     // 从路由中拿到歌单的 id
     const id = props.match.params.id;
-    const { currentAlbum: currentAlbumImmutable, enterLoading } = props;
+    const { currentAlbum: currentAlbumImmutable, enterLoading, songsCount } = props;
     const { getAlbumDataDispatch } = props;
 
     useEffect(() => {
@@ -103,6 +104,11 @@ function Album(props) {
             </Menu>
         )
     };
+    const musicNoteRef = useRef ();
+
+    const musicAnimation = (x, y) => {
+        musicNoteRef.current.startAnimation ({ x, y });
+    };
 
     return (
         <CSSTransition
@@ -113,7 +119,7 @@ function Album(props) {
             unmountOnExit
             onExited={props.history.goBack}
         >
-            <Container>
+            <Container play={songsCount}>
                 { enterLoading ? <Loading /> : null}
                 <Header ref={headerEl} title={title} handleClick={handleBack} isMarquee={isMarquee}></Header>
                 {
@@ -122,11 +128,18 @@ function Album(props) {
                         <div>
                             {renderTopDesc()}
                             {renderMenu()}
-                                <SongsList songs={currentAlbum.tracks}></SongsList>
+                                <SongsList
+                                    songs={currentAlbum.tracks}
+                                    collectCount={currentAlbum.subscribedCount}
+                                    showCollect={true}
+                                    showBackground={true}
+                                    musicAnimation={musicAnimation}
+                                ></SongsList>
                         </div>
                     </Scroll>
                     ) : null
                 }
+                <MusicNote ref={musicNoteRef}></MusicNote>
             </Container>   
         </CSSTransition>
     )
@@ -135,7 +148,8 @@ function Album(props) {
 // 映射 Redux 全局的 state 到组件的 props 上
 const mapStateToProps = (state) => ({
     currentAlbum: state.getIn(['album', 'currentAlbum']),
-    enterLoading: state.getIn(['album', 'enterLoading'])
+    enterLoading: state.getIn(['album', 'enterLoading']),
+    songsCount: state.getIn(['player', 'playList']).size
 })
 
 // 映射 dispatch 到 props 上
