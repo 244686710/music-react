@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect, useMemo} from 'react';
-import styled from'styled-components';
+import styled from 'styled-components';
 import style from '../../assets/global-style';
 import { debounce } from './../../api/utils';
 
@@ -12,11 +12,11 @@ const SearchBoxWrapper = styled.div`
   padding-right: 20px;
   height: 40px;
   background: ${style["theme-color"]};
-  .icon-back {
+  .icon-back{
     font-size: 24px;
     color: ${style["font-color-light"]};
   }
-  .box {
+  .box{
     flex: 1;
     margin: 0 5px;
     line-height: 18px;
@@ -26,64 +26,61 @@ const SearchBoxWrapper = styled.div`
     outline: none;
     border: none;
     border-bottom: 1px solid ${style["border-color"]};
-    &::placeholder {
+    &::placeholder{
       color: ${style["font-color-light"]};
     }
   }
-  .icon-delete {
+  .icon-delete{
     font-size: 16px;
     color: ${style["background-color"]};
   }
 `
 
 const SearchBox = (props) => {
-    const queryRef = useRef()
-    const [query, setQuery] = useState();
+  const queryRef = useRef();
+  const [query, setQuery] = useState('');
 
-    useEffect (() => {
-        queryRef.current.focus ();
-    }, []);
+  const { newQuery } = props;
+  const { handleQuery } = props;
 
-    // 从父组件热门收索中拿到的新关键词
-    const { newQuery } = props;
+  let handleQueryDebounce = useMemo(() => {
+    return debounce(handleQuery, 500);
+  }, [handleQuery]);
 
-    const { handleQuery } = props
-    
-    const displayStyle = query ? { display: 'block' } : { display: 'none' }
-    
-    const handleChange = (e) => {
-        setQuery(e.currentTarget.value);
+  useEffect(() => {
+    queryRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+    handleQueryDebounce(query);
+    // eslint-disable-next-line 
+  }, [query]);
+
+  useEffect(() => {
+    if(newQuery !== query){
+      setQuery(newQuery);
     }
+    // eslint-disable-next-line
+  }, [newQuery]);
 
-    const clearQuery = () => {
-        setQuery ('');
-        queryRef.current.focus ();
-    }
+  const handleChange = (e) => {
+    setQuery(e.currentTarget.value);
+  };
 
-    // 缓存方法
-    let handleQueryDebounce = useMemo (() => {
-        return debounce (handleQuery, 500);
-    }, [handleQuery]);
-    
-    useEffect (() => {
-        // 注意防抖
-        handleQueryDebounce(query);
-        // eslint-disable-next-line
-    }, [query]);
-    useEffect (() => {
-        if (newQuery !== query){
-          setQuery (newQuery);
-        }
-        // eslint-disable-next-line
-    }, [newQuery]);
+  const clearQuery = () => {
+    setQuery('');
+    queryRef.current.focus();
+  }
+  
+  const displayStyle = query ? {display: 'block'}: {display: 'none'};
 
-    return (
-        <SearchBoxWrapper>
-            <i className="iconfont icon-back" onClick={() => props.back ()}>&#xe655;</i>
-                <input ref={queryRef} className="box" placeholder="搜索歌曲、歌手、专辑" value={query} onChange={handleChange}/>
-            <i className="iconfont icon-delete" onClick={clearQuery} style={displayStyle}>&#xe600;</i>
-        </SearchBoxWrapper>
-    )
-}
+  return (
+    <SearchBoxWrapper>
+      <i className="iconfont icon-back" onClick={() => props.back()}>&#xe655;</i>
+      <input ref={queryRef} className="box" placeholder="搜索歌曲、歌手、专辑" value={query} onChange={handleChange}/>
+      <i className="iconfont icon-delete" onClick={clearQuery} style={displayStyle}>&#xe600;</i>
+    </SearchBoxWrapper>
+  )
+};
 
-export default React.memo(SearchBox)
+export default React.memo(SearchBox);

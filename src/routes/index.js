@@ -1,13 +1,14 @@
 import React, {lazy, Suspense} from 'react';
 import { Redirect } from "react-router-dom";
 import Home from '../application/Home';
+import Search from '../application/Search'
 const RecommendComponent = lazy(() => import('../application/Recommend'));
 const SingersComponent = lazy(() => import('../application/Singers'));
 const SingerComponent = lazy(() => import('../application/Singer'));
 const RankComponent = lazy(() => import('../application/Rank'));
 const AlbumComponent = lazy(() => import('../application/Album'));
 const SearchComponent = lazy(() => import('../application/Search'));
-
+console.log(Search)
 const SuspenseComponent = Component => props => {
   return (
     <Suspense fallback={null}>
@@ -56,7 +57,14 @@ export default [
             component: SuspenseComponent(AlbumComponent)
           }
         ]
-      }, {
+      },
+      { //
+        path: "/album:id",
+        exact: true,
+        key: "album",
+        component: AlbumComponent
+      },
+      {
         path: "/search",
         exact: true,
         key: "search",
